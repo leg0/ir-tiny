@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ir-receiver", "ir-receiver\ir-receiver.cppproj", "{6F80C053-5445-42F9-B278-79A7E65AA2E6}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "blink", "test-blink\blink.cppproj", "{AA46FB1E-B308-4EE0-BCDA-33406B309EE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F80C053-5445-42F9-B278-79A7E65AA2E6}.Debug|AVR.ActiveCfg = Debug|AVR
+		{6F80C053-5445-42F9-B278-79A7E65AA2E6}.Debug|AVR.Build.0 = Debug|AVR
+		{6F80C053-5445-42F9-B278-79A7E65AA2E6}.Release|AVR.ActiveCfg = Release|AVR
+		{6F80C053-5445-42F9-B278-79A7E65AA2E6}.Release|AVR.Build.0 = Release|AVR
+		{750661A4-FEC0-4180-A206-E1D80D68C8AD}.Debug|AVR.ActiveCfg = Debug|AVR
+		{750661A4-FEC0-4180-A206-E1D80D68C8AD}.Debug|AVR.Build.0 = Debug|AVR
+		{750661A4-FEC0-4180-A206-E1D80D68C8AD}.Release|AVR.ActiveCfg = Release|AVR
+		{750661A4-FEC0-4180-A206-E1D80D68C8AD}.Release|AVR.Build.0 = Release|AVR
+		{AA46FB1E-B308-4EE0-BCDA-33406B309EE7}.Debug|AVR.ActiveCfg = Debug|AVR
+		{AA46FB1E-B308-4EE0-BCDA-33406B309EE7}.Debug|AVR.Build.0 = Debug|AVR
+		{AA46FB1E-B308-4EE0-BCDA-33406B309EE7}.Release|AVR.ActiveCfg = Release|AVR
+		{AA46FB1E-B308-4EE0-BCDA-33406B309EE7}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
