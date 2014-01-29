@@ -31,19 +31,28 @@ struct Board
 {
     typedef Pin<PortB, PB0> IrDataPin;
     typedef Pin<PortB, PB1> UartTxPin;
+    typedef Pin<PortB, PB2> Unused1;
+    typedef Pin<PortB, PB3> Unused2;
 
     typedef Timer0 TheClock;
     //typedef UartTx<SoftwareUartTraits<SerialOutputPin, SerialClock>> SerialTx;
 
     static void init()
     {
+        // Set system clock prescaler to 1 - run at 8 MHz.
+        System::setClockPrescaler(System::ClockPrescaler::_1);
+
         #if defined(__AVR_ATtiny5__) || defined(__AVR_ATtiny10__)
         // Disable ADC - not going to use it. Save some power.
         PRR |= (1 << PRADC);
         #endif
 
-        // Set system clock prescaler to 1 - run at 8 MHz.
-        System::setClockPrescaler(System::ClockPrescaler::_1);
+        // According to data sheet, the unused pins should have defined level,
+        // either 0 or 1, but advises against connecting the pins to GND or VCC
+        // because that could accidentally cause some not so funny results.
+        // Enable internal pull-up for the unused pins.
+        Unused1::enablePullUp();
+        Unused2::enablePullUp();
 
         uint32_t const F_CPU = 8000000;
         uint32_t const SERIAL_BAUD = 115200;
