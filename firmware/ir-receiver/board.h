@@ -62,8 +62,12 @@ struct Board
         // The IR-Receiver is active-low and it leaves the pin floating when
         // inactive. We need to drive the line high ourselves (or use external
         // pull-up resistor).
-        IrDataPin::makeInput();
+        //IrDataPin::makeInput(); // it's input by default
         IrDataPin::enablePullUp();
+        // TODO: add features to lib so that we could enable interrupt like this:
+        //IrDataPin::enablePinChangeInterrupt();
+        PCICR |= (1 << PCIE0);  // Enable pin change interrupt controller 0
+        PCMSK |= (1 << PCINT0); // Enable pin change interrupts for pin0
 
         UartTxPin::makeOutput();
     }
