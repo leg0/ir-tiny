@@ -47,7 +47,7 @@ struct Pin
 
 	static bool isSet()
 	{
-		return Port::readInput() & (1<<Number);
+		return (Port::readInput() & (1<<Number)) != 0;
 	}
 	
 	static void toggle()
