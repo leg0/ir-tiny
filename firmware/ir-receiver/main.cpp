@@ -11,7 +11,7 @@
     register uint8_t g_serialShift   asm("r29");
 #else
     uint16_t volatile g_currentTime;
-    uint8_t volatile  g_bitsRemaining;
+    register uint8_t g_bitsRemaining asm("r28");//uint8_t volatile  g_bitsRemaining;
     uint16_t volatile g_serialShift;
 #endif
 
@@ -31,6 +31,8 @@ ISR(TIM0_COMPA_vect, ISR_NAKED)
         if (!g_queue.empty())
         {
             g_bitsRemaining = 11; // start + 8*data + 2*stop
+            __sync_synchronize();
+
             g_serialShift = (g_queue.pop() | 0x300) << 1;
 
         }
@@ -39,18 +41,18 @@ ISR(TIM0_COMPA_vect, ISR_NAKED)
     {
         Board::UartTxPin::write(g_serialShift & 1);
         g_serialShift >>= 1;
+
         --g_bitsRemaining;
+        __sync_synchronize();
     }
 
     reti();
 }
 
-//ISR(INT0_vect, ISR_NAKED)
 ISR(PCINT0_vect, ISR_NAKED)
 {
     // works even when the values overflow.
-    uint16_t pulseLength = g_currentTime;// - g_prevInt0Time;
-    //g_prevInt0Time = g_currentTime;
+    uint16_t pulseLength = g_currentTime;
     g_currentTime = 0;
 
     // Represent the low time as negative value, and high time
@@ -69,21 +71,16 @@ ISR(PCINT0_vect, ISR_NAKED)
 
 int main ()
 {
-    //asm volatile ("ldi r28, 0"); //g_bitsRemaining = 0;
-    //asm volatile ("ldi r28, 10"); //XXX: 
     g_bitsRemaining = 0;
+    __sync_synchronize();
+
     g_queue.init();
 
-    g_queue.push(0x30);
-    g_queue.push(0x31);
-    g_queue.push(0x32);
-    g_queue.push(0x33);
-
     Board::UartTxPin::write(true);
-	Board::init();
     Board::LedPin::write(true);
+    Board::init();
     sei();
-        
-	for (;;)
+
+    for (;;)
     { }
 }
