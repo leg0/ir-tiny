@@ -21,9 +21,26 @@
 
 using namespace test_int0;
 
-ISR(PCINT0_vect, ISR_NAKED)
+// copyInputToOutput1 and copyInputToOutput2 should generate identical code
+// (like bit-for-bit identical).
+
+static void copyInputToOutput1()
 {
     Board::OutputPin::write(Board::InputPin::isSet());
+}
+
+static void copyInputToOutput2()
+{
+    bool const isSet = PINB & (1<<PORTB0);
+    if (isSet)
+        PORTB |= (1<<PORTB2);
+    else
+        PORTB &= ~(1<<PORTB2);
+}
+
+ISR(PCINT0_vect, ISR_NAKED)
+{
+    copyInputToOutput1();
     reti();
 }
 
@@ -33,6 +50,7 @@ ISR(PCINT0_vect, ISR_NAKED)
 int main(void)
 {
     Board::init();
+    copyInputToOutput1();
     sei();
     for (;;)
     { }
