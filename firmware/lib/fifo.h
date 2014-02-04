@@ -26,35 +26,37 @@ struct IsPowerOf2<0>
     static bool const value = false;
 };
 
-template <uint8_t Size>
+template <uint8_t Size, typename VT = uint8_t>
 class GenericFifo
 {
     static_assert(IsPowerOf2<Size>::value, "Size should be a power of 2");
 
 public:
+
+    typedef VT ValueType;
     static uint8_t const BufferSize = Size;
 
 
-    void init()
+    void init() volatile
     {
         head = tail = 0;
     }
 
     /// Check if the queue is empty.
-    bool empty() const
+    bool empty() const volatile
     {
         return head == tail;
     }
 
     /// Check if the queue is full. 
-    bool full() const
+    bool full() const volatile
     {
         return (head - tail) == BufferSize;
     }
 
     /// Push a value to the queue.
     /// @pre !full()
-    void push(uint8_t val)
+    void push(ValueType val) volatile
     {
         if (!full())
         {
@@ -66,7 +68,7 @@ public:
 
     /// Remove the oldest value from the queue.
     /// @pre !empty()
-    uint8_t pop()
+    ValueType pop() volatile
     {
         uint8_t const idx = tail & (BufferSize - 1);
         ++tail;
@@ -76,7 +78,6 @@ public:
 private:
     uint8_t head;
     uint8_t tail;
-    uint8_t buffer[BufferSize];
+    ValueType buffer[BufferSize];
 };
 
-typedef GenericFifo<8> Fifo;

@@ -31,7 +31,7 @@ struct Board
 {
     typedef Pin<PortB, PB0> IrDataPin;
     typedef Pin<PortB, PB1> UartTxPin;
-    typedef Pin<PortB, PB2> Unused1;
+    typedef Pin<PortB, PB2> LedPin;
     typedef Pin<PortB, PB3> Unused2;
 
     typedef Timer0 TheClock;
@@ -51,7 +51,7 @@ struct Board
         // either 0 or 1, but advises against connecting the pins to GND or VCC
         // because that could accidentally cause some not so funny results.
         // Enable internal pull-up for the unused pins.
-        Unused1::enablePullUp();
+        LedPin::makeOutput();
         Unused2::enablePullUp();
 
         uint32_t const F_CPU = 8000000;
