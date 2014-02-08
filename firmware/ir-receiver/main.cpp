@@ -24,7 +24,8 @@ ISR(TIM0_COMPA_vect, ISR_NAKED)
     // bit_time = 1/115200 s = ~8.681 µs (== 1 bit)
     // The IR-pulses are measured in units of bit_time. For example
     // a 400 µs pulse would be 400 µs*115200 bit/s = 46.08 bits
-    ++g_currentTime;
+    if (g_currentTime < 0x7FFF)
+        ++g_currentTime;
 
     if (g_bitsRemaining == 0)
     {
@@ -57,14 +58,13 @@ ISR(PCINT0_vect, ISR_NAKED)
 
     // Represent the low time as negative value, and high time
     // as a positive value.
-    bool const irInput = Board::IrDataPin::isSet();
-    if (!irInput)
-        pulseLength *= -1;
+    uint8_t const irInput = Board::IrDataPin::isSet() ? 1 : 0;
+    pulseLength |= (irInput << 15);
 
     g_queue.push(high(pulseLength));
     g_queue.push(low(pulseLength));
 
-    Board::LedPin::write(!irInput);
+    Board::LedPin::write(irInput);
 
     reti();
 }
@@ -76,8 +76,6 @@ int main ()
 
     g_queue.init();
 
-    Board::UartTxPin::write(true);
-    Board::LedPin::write(true);
     Board::init();
     sei();
 

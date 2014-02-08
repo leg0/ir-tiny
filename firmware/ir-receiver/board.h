@@ -39,6 +39,24 @@ struct Board
 
     static void init()
     {
+        // According to data sheet, the unused pins should have defined level,
+        // either 0 or 1, but advises against connecting the pins to GND or VCC
+        // because that could accidentally cause some not so funny results.
+        // Enable internal pull-up for the unused pins.
+        LedPin::makeOutput();
+        LedPin::write(true);
+
+        Unused2::enablePullUp();
+
+        UartTxPin::makeOutput();
+        UartTxPin::write(true);
+
+        // The IR-Receiver is active-low and it leaves the pin floating when
+        // inactive. We need to drive the line high ourselves (or use external
+        // pull-up resistor).
+        //IrDataPin::makeInput(); // it's input by default
+        IrDataPin::enablePullUp();
+
         // Set system clock prescaler to 1 - run at 8 MHz.
         System::setClockPrescaler(System::ClockPrescaler::_1);
 
@@ -47,28 +65,14 @@ struct Board
         PRR |= (1 << PRADC);
         #endif
 
-        // According to data sheet, the unused pins should have defined level,
-        // either 0 or 1, but advises against connecting the pins to GND or VCC
-        // because that could accidentally cause some not so funny results.
-        // Enable internal pull-up for the unused pins.
-        LedPin::makeOutput();
-        Unused2::enablePullUp();
-
         uint32_t const F_CPU = 8000000;
         uint32_t const SERIAL_BAUD = 115200;
         uint16_t const tickCount = F_CPU / SERIAL_BAUD;
         TheClock::setCtcMode(tickCount);
 
-        // The IR-Receiver is active-low and it leaves the pin floating when
-        // inactive. We need to drive the line high ourselves (or use external
-        // pull-up resistor).
-        //IrDataPin::makeInput(); // it's input by default
-        IrDataPin::enablePullUp();
         // TODO: add features to lib so that we could enable interrupt like this:
         //IrDataPin::enablePinChangeInterrupt();
         PCICR |= (1 << PCIE0);  // Enable pin change interrupt controller 0
         PCMSK |= (1 << PCINT0); // Enable pin change interrupts for pin0
-
-        UartTxPin::makeOutput();
     }
 };
