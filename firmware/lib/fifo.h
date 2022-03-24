@@ -2,39 +2,27 @@
 
 #include <stdint.h>
 
-template <uint32_t N>
-struct IsEven
+constexpr bool IsEven(uint32_t N)
 {
-    static bool const value = (N&1) == 0;
-};
+    return (N&1) == 0;
+}
 
-template <uint32_t N>
-struct IsPowerOf2
+constexpr bool IsPowerOf2(uint32_t N)
 {
-    static bool const value = IsEven<N>::value && IsPowerOf2<N / 2>::value;
-};
-
-template <>
-struct IsPowerOf2<1>
-{
-    static bool const value = true;
-};
-
-template <>
-struct IsPowerOf2<0>
-{
-    static bool const value = false;
+    return N == 0 ? false
+         : N == 1 ? true
+         : IsEven(N) && IsPowerOf2(N/2);
 };
 
 template <uint8_t Size, typename VT = uint8_t>
 class GenericFifo
 {
-    static_assert(IsPowerOf2<Size>::value, "Size should be a power of 2");
+    static_assert(IsPowerOf2(Size), "Size should be a power of 2");
 
 public:
 
-    typedef VT ValueType;
-    static uint8_t const BufferSize = Size;
+    using ValueType = VT;
+    static constexpr uint8_t BufferSize = Size;
 
 
     void init() volatile
